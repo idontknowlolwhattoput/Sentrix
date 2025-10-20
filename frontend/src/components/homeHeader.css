@@ -1,0 +1,37 @@
+.animation {
+  display: inline-block; /* prevents reflow issues when scaling */
+  font-weight: 450;      /* already bold so it doesn’t change */
+  transition: transform 0.2s ease-in-out,
+              color 0.2s ease-in-out,
+              background-color 0.2s ease-in-out;
+}
+
+.animation:hover {
+     font-style: bold;
+     font-weight: 600;
+     transform: scale(1.15);
+}
+
+.request:hover {
+  scale: 1.13;
+  color: black;
+  font-weight: bold;
+  background-color: white;
+  border: 4px solid black;
+  transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+  transition-timing-function: var(--default-transition-timing-function); /* cubic-bezier(0.4, 0, 0.2, 1) */
+  transition-duration: var(--default-transition-duration);
+}
+
+
+@media only screen and (max-width: 600px) {
+    .blackbar{
+        display: none
+    }
+    
+    .parentContainer {
+      gap: 10%  ;
+    }
+
+    
+}

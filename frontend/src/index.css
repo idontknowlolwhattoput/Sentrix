@@ -1,0 +1,44 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+@plugin "daisyui" {
+   themes: light --default
+}
+
+ .inter {
+      font-family: "Inter", sans-serif;
+ }
+
+ .animated-bw-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: repeating-linear-gradient(
+    120deg,
+    #fff 0px,
+    #fff 40px,
+    #000 40px,
+    #000 80px
+  );
+  background-size: 200% 200%;
+  animation: stripesMove 6s linear infinite;
+}
+
+@keyframes stripesMove {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200px 200px;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden !important;
+  width: 100%;
+}
