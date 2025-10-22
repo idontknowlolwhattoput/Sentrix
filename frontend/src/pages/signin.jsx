@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router";
+import { AuthContext } from "../context/AuthProvider";
 import logo from "../assets/img/logo.svg"
-import { useAuth } from "../context/AuthProvider";
-
 import "../index.css"
 
 function Signin({ onLogin }) {
-    const [authenticated, setAuthentication] = useAuth();
+    const [isAuthenticated, setAuthentication] = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
-
+    const navigate = useNavigate();
     const handleSubmit = (e) => {
         e.preventDefault();
     
@@ -26,9 +26,12 @@ function Signin({ onLogin }) {
         }
     };
 
-    const handleTest = (e) => {
-       setAuthentication(!authenticated)
-       alert(localStorage.getItem("auth"))
+    const handleLogin = (e) => {
+       setAuthentication(true)
+    }
+
+    const handleSignout = (e) => {
+         setAuthentication(false)
     }
 
     return (
@@ -93,10 +96,16 @@ function Signin({ onLogin }) {
                         Sign in
                     </button>
                     <button
-                        onClick={handleTest}
+                        onClick={handleLogin}
                         className="btn w-full bg-black text-white border-none hover:bg-gray-900"
                     >
-                        Test
+                        Login
+                    </button>
+                     <button
+                        onClick={handleSignout}
+                        className="btn w-full bg-black text-white border-none hover:bg-gray-900"
+                    >
+                        Signout
                     </button>
                     </div>
                 </form>
@@ -104,7 +113,7 @@ function Signin({ onLogin }) {
                 <div className="text-center text-xs text-black/40">
                     Don’t have an account? <a href="#" className="link text-black hover:underline">Create</a>
                 </div>
-    
+             {String(isAuthenticated)}
                 </div>
             </div>
         </div>  

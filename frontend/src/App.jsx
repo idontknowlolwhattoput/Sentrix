@@ -6,23 +6,23 @@ import Header from './pages/header'
 import RouteProtection from './pages/routeProtection'
 
 import AuthProvider from './context/AuthProvider'
+
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}/>
-          <Route path="/signin" element={<Signin />}/>
+   <AuthProvider>
+     <BrowserRouter>
+       <Routes>
+         <Route path="/" element={<Home />}/>
+         <Route path="/signin" element={<Signin />}/>
 
-          <Route element={<RouteProtection />} >
-          <Route path="/head" element={<Header />}/>
-          </Route>
+         <Route element={<RouteProtection />} >
+         <Route path="/head" element={<Header />}/>
+         </Route>
 
-        </Routes>
-      </BrowserRouter>
-    </AuthProvider>
+       </Routes>
+     </BrowserRouter>
+   </AuthProvider>
   )
 }
 

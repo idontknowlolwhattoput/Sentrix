@@ -1,5 +1,8 @@
 import express from "express";
 import pgPromise from "pg-promise";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const app = express();
 app.use(express.json());
@@ -9,11 +12,11 @@ const pgp = pgPromise();
 
 // Database connection configuration
 const db = pgp({
- 
-  port: 5432,
-  database: "sentrixdb",
-  user: "postgres",
-  password: "postgres12345",
+  host: process.env.AWS_DB_HOST,
+  port: process.env.AWS_DB_PORT,
+  database: process.env.AWS_DB_NAME,
+  user: process.env.AWS_DB_USERNAME,
+  password: process.env.AWS_DB_PASSWORD,
   ssl: {
     require: true,
     rejectUnauthorized: false, // allows self-signed AWS cert
@@ -23,7 +26,7 @@ const db = pgp({
 // Test endpoint
 app.get("/test-db", async (req, res) => {
   try {
-    const result = await db.one("SELECT NOW() AS current_time");
+    const result = await db.one("SELECT * FROM accounts");
     res.json({
       success: true,
       message: "Database connection successful!",
