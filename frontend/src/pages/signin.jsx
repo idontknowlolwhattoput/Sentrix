@@ -5,6 +5,7 @@ import logo from "../assets/img/logo.svg"
 import "../index.css"
 
 function Signin({ onLogin }) {
+    
     const [isAuthenticated, setAuthentication] = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -27,7 +28,8 @@ function Signin({ onLogin }) {
     };
 
     const handleLogin = (e) => {
-       setAuthentication(true)
+         setAuthentication(true)
+         navigate("/head")
     }
 
     const handleSignout = (e) => {
@@ -102,7 +104,7 @@ function Signin({ onLogin }) {
                         Login
                     </button>
                      <button
-                        onClick={handleSignout}
+                        onClick={() => {setAuthentication(false)}}
                         className="btn w-full bg-black text-white border-none hover:bg-gray-900"
                     >
                         Signout
