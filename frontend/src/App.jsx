@@ -4,29 +4,39 @@ import Home from './pages/home'
 import Signin from './pages/signin'
 import Header from './pages/header'
 import Dashboard from "./layout/dashboardLayout"
+import SidebarList from './components/sidebarlist'
+import Playground from './playground'
 
 import RouteProtection from './pages/routeProtection'
 import AuthProvider from './context/AuthProvider'
+import ResourceProvider from './context/ResourceProvider'
 
 
 function App() {
+return (
+<AuthProvider>
+  <ResourceProvider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />}/>
+        <Route path="/signin" element={<Signin />}/>
 
-  return (
-   <AuthProvider>
-     <BrowserRouter>
-       <Routes>
-         <Route path="/" element={<Home />}/>
-         <Route path="/signin" element={<Signin />}/>
-         <Route path="/test" element={<Dashboard />}/>
+        {/* DASHBOARD TESTING */}
+        <Route path="/test" element={<Dashboard />}/>
+        <Route path="/test2" element={<SidebarList />}/>
 
-         <Route element={<RouteProtection />} >
-         <Route path="/head" element={<Header />}/>
-         </Route>
+        <Route element={<RouteProtection />} >
+        <Route path="/head" element={<Header />}/>
+        </Route>
 
-       </Routes>
-     </BrowserRouter>
-   </AuthProvider>
-  )
+        {/* FEATURE TESTING */}
+        <Route path="/play" element={<Playground />}/>
+
+      </Routes>
+    </BrowserRouter>
+  </ResourceProvider>
+</AuthProvider>
+)
 }
 
 export default App
