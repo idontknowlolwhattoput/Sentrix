@@ -18,7 +18,7 @@ export default function HomeHeader() {
 
             {/* MIDDLE SECTION */}
           <div className="middle mt-2 inter font-bold text-3xl w-full md:w-[40%] h-full flex flex-col items-center  justify-center" id="middle">
-            <img src={logo} className="middleContent w-20 h-20"/>
+            <img src={logo} className="middleContent w-15 h-15"/>
             <h1>Sentrix</h1>
           </div>
           

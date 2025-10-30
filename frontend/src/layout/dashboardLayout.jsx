@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 
 import sentrixlogo from "../assets/img/logo.svg"
 import searchlogo from "../assets/icons/search.svg"
@@ -7,21 +7,44 @@ import arrowup from "../assets/icons/dropup.svg"
 import notif from "../assets/icons/notifyes.svg"
 
 import SidebarList from "../components/sidebarlist"
+import { SelectionContext } from "../context/SelectionProvider"
+import Dashboard from "../components/Dashboard/dashboard"
+import Signin from "../pages/signin"
+
+import DashboardHome from "../components/Dashboard/dashboard"
+import PatientRegistration from "../components/Patient/patientRegistration"
 
 export default function DashboardLayout() {
 
     const [isDropdown, setDropDown] = useState(false)
+    const [selection, setSelection] = useContext(SelectionContext)
 
     const handleDropdown = () => {
       setDropDown(!isDropdown)
+    }
+
+    const renderContent = (item) => {
+       switch (item) {
+        case "Dashboard":
+          return <DashboardHome />
+
+        case "Employees":
+          return alert(item)
+        
+        case "Register Patient":
+          return <PatientRegistration />
+       }
     }
     return (
         <div className="flex W-screen h-screen poppins ">
          {/* LEFT SIDEBAR*/ }
           <div className="w-[20%] h-full bg-[#F1F2F7]">
              <div className="flex w-full h-[10%] pl-6 items-center gap-1 shadow-sm">
-               <img src={sentrixlogo} className="w-15 h-15" />
-               <h1 className="inter text-2xl font-extrabold">Sentrix.</h1>
+               <img src={sentrixlogo} className="w-13 h-13" />
+               <div className="flex items-baseline gap-0.5">
+                <h1 className="inter text-4xl font-extrabold">S</h1>
+                <h1 className="inter text-xl font-extrabold tracking-wider">ENTRIX.</h1>
+               </div>
              </div>
              <SidebarList />
           </div>
@@ -29,7 +52,7 @@ export default function DashboardLayout() {
           {/* MAIN CONTENT */}
           <div className="flex flex-col w-full h-full ">
             {/* TOP NAVBAR */}
-            <div className="flex items-center justify-between w-full h-[11.2%] bg-white shadow-sm px-8">
+            <div className="flex items-center justify-between w-full h-[10%] bg-white shadow-sm px-8 ">
               {/* LEFT: SEARCH BAR */}
               <div className="flex items-center w-[60%]">
                 <div
@@ -68,8 +91,8 @@ export default function DashboardLayout() {
             </div>
 
 
-            <div className="w-full h-full ">
-            
+            <div className="w-full h-[90%] max-h-full" >
+               {renderContent(selection)}
             </div>
           </div>
         </div>

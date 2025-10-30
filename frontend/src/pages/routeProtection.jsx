@@ -6,5 +6,6 @@ import { AuthContext } from "../context/AuthProvider";
 
 export default function RouteProtection() {
    const [isAuthenticated, setAuthentication] = useContext(AuthContext)
+   alert(isAuthenticated)
    return isAuthenticated ? <Outlet /> : <Signin />;
 }
