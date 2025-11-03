@@ -7,8 +7,8 @@ export default function ResourceProvider({ children }) {
     {
       id: "General",
       items: [
-        { item: "Dashboard", icon: "LayoutDashboard" },
-        { item: "Manage Employee", icon: "Users" },
+        { item: "Dashboard", icon: "LayoutDashboard"},
+        { item: "Manage Employee", icon: "Users"},
         { item: "Patient List", icon: "List" },
         { item: "Register Patient", icon: "FilePenLine" },
         { item: "Appointments", icon: "CalendarDays" },

@@ -13,6 +13,7 @@ import Signin from "../pages/signin"
 
 import DashboardHome from "../components/Dashboard/dashboard"
 import PatientRegistration from "../components/Patient/patientRegistration"
+import ManageEmployee from "../components/Employee/manageEmployee"
 
 export default function DashboardLayout() {
 
@@ -28,8 +29,8 @@ export default function DashboardLayout() {
         case "Dashboard":
           return <DashboardHome />
 
-        case "Employees":
-          return alert(item)
+        case "Manage Employee":
+          return <ManageEmployee />
         
         case "Register Patient":
           return <PatientRegistration />
