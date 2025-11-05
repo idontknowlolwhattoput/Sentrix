@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import AddEmployee from "./addEmployee";
 
 export default function ManageEmployee() {
   const [employees, setEmployees] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch data from backend
   useEffect(() => {
     fetch("http://localhost:5000/users/db")
       .then((res) => res.json())
@@ -11,8 +12,12 @@ export default function ManageEmployee() {
       .catch((err) => console.error("Error fetching employees:", err));
   }, []);
 
+  const handleRegister = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
-    <div className="w-full h-full max-w-full p-10 overflow-auto bg-gray-50">
+    <div className="w-full h-full max-w-full p-10 overflow-auto bg-gray-50 relative">
       {/* Header */}
       <div className="flex items-center justify-between w-[95%] border-b border-gray-300 pb-5">
         <h1 className="text-2xl font-semibold text-gray-800">Employee</h1>
@@ -22,7 +27,10 @@ export default function ManageEmployee() {
             placeholder="Search..."
             className="w-64 border border-gray-300 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-gray-700 focus:outline-none"
           />
-          <button className="bg-black text-white text-sm px-5 py-2 rounded-md hover:bg-gray-800 transition">
+          <button 
+            className="bg-black text-white text-sm px-5 py-2 rounded-md hover:bg-gray-800 transition"
+            onClick={handleRegister}
+          >
             Add New Employee
           </button>
         </div>
@@ -79,6 +87,15 @@ export default function ManageEmployee() {
           </tbody>
         </table>
       </div>
+
+      {/* Modal - Contained within parent */}
+      {isModalOpen && (
+        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="w-full h-full max-w-6xl">
+            <AddEmployee />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -14,6 +14,7 @@ import ResourceProvider from './context/ResourceProvider'
 import DashboardHome from './components/Dashboard/dashboard'
 import ContextProvider from './context/ContextProvider'
 import PatientRegistration from './components/Patient/patientRegistration'
+import AddEmployee from './components/Employee/addEmployee'
 
 
 function App() {
@@ -24,7 +25,7 @@ return (
            <Route path="/" element={<Home />}/>
            <Route path="/signin" element={<Signin />}/>
            <Route path="/patient-registration" element={<PatientRegistration />}/>
-
+            <Route path="/gh" element={<AddEmployee />}/>
            {/* DASHBOARD TESTING */}
            <Route path="/test" element={<Dashboard />}/>
            <Route path="/test2" element={<SidebarList />}/>
