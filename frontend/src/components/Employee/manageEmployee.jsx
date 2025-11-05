@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AddEmployee from "./addEmployee";
+import { ModalContext } from "../../context/ModalProvider";
 
 export default function ManageEmployee() {
   const [employees, setEmployees] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useContext(ModalContext)
+
 
   useEffect(() => {
     fetch("http://localhost:5000/users/db")
@@ -91,7 +93,7 @@ export default function ManageEmployee() {
       {/* Modal - Contained within parent */}
       {isModalOpen && (
         <div className="absolute inset-0 w-full h-full bg-black/40 bg-opacity-50 flex items-center justify-center p-4">
-          <AddEmployee></AddEmployee>
+          <AddEmployee/>
         </div>
       )}
     </div>
