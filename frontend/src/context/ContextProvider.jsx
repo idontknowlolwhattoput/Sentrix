@@ -1,4 +1,5 @@
 import AuthProvider from "./AuthProvider"
+import ModalContent  from "./ModalProvider"
 import ResourceProvider from "./ResourceProvider"
 import SelectionProvider from "./SelectionProvider"
 
@@ -7,7 +8,9 @@ export default function ContextProvider({children}) {
         <AuthProvider>
           <ResourceProvider>
             <SelectionProvider>
-             {children}
+              <ModalContent>
+                {children}
+              </ModalContent>
             </SelectionProvider>
           </ResourceProvider>
         </AuthProvider>
