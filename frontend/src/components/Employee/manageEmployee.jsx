@@ -2,10 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import AddEmployee from "./addEmployee";
 import { ModalContext } from "../../context/ModalProvider";
 import axios from "axios";
+
 export default function ManageEmployee() {
   const [employees, setEmployees] = useState([]);
   const [isModalOpen, setIsModalOpen] = useContext(ModalContext);
-
+  const [isViewed, setView] = useState(false)
   useEffect(() => {
     fetch("http://localhost:5000/employees/view")
       .then((res) => res.json())
@@ -66,7 +67,7 @@ export default function ManageEmployee() {
             {employees.map((emp) => (
               <tr
                 key={emp.employee_id}
-                className="bg-white shadow-sm hover:shadow-md transition rounded-xl"
+                className="bg-white shadow-sm hover:shadow-md transition rounded-xl hover:bg-gray-400 "
               >
                 <td className="px-3 py-3 flex items-center gap-3">
                   <span className="font-medium text-gray-800">
@@ -76,9 +77,11 @@ export default function ManageEmployee() {
                 <td className="px-3 text-gray-700">{emp.position}</td>
                 <td className="px-3 text-gray-700">{emp.email}</td>
                 <td className="px-3 text-gray-700">{emp.phone}</td>
-                <td className="px-3 text-gray-700">{emp.employee_id}</td>
+                <td className="px-3 text-gray-700 text-center">{emp.employee_id}</td>
                 <td className="px-3 text-center">
-                  <button className="text-gray-600 hover:text-gray-900 mr-2">
+                  <button 
+                  className="text-gray-600 hover:text-gray-900 mr-2"
+                  onClick={() => setView(!isViewed)}>
                     ✏️
                   </button>
                   <button 
@@ -107,6 +110,10 @@ export default function ManageEmployee() {
           <AddEmployee />
         </div>
       )}
+
+      {isViewed && (
+       <div className="fixed inset-0 w-full h-full z-40 bg-black/50 backdrop-blur-sm" onClick={() => setView(!isViewed)}></div>
+       )}
     </div>
   );
 }

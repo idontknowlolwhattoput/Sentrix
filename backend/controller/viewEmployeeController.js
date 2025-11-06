@@ -9,7 +9,8 @@ export const viewEmployeeController = (req, res) => {
       ei.middle_name, 
       ei.last_name, 
       ei.phone, 
-      ei.email
+      ei.email,
+      ei.profile_picture
     FROM employee_account ea
     INNER JOIN employee_info ei 
     ON ea.employee_id = ei.employee_id
