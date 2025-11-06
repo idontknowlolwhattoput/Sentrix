@@ -1,25 +1,25 @@
 import React, { useContext, useState } from "react";
 import { ModalContext } from "../../context/ModalProvider";
+import axios from "axios";
 
 export default function AddEmployee() {
   const [isModalOpen, setModalOpen] = useContext(ModalContext);
 
-  // Employee state
   const [employeeData, setEmployeeData] = useState({
     firstName: "",
     middleName: "",
     lastName: "",
     email: "",
+    phone: "",
+    address: "",
     sex: "",
     department: "",
     position: "",
     profilePicture: null,
   });
 
-  // Confirmation modal visibility
   const [showConfirm, setShowConfirm] = useState(false);
 
-  // Department and position mapping
   const departmentPositions = {
     "General Medicine": [
       "General Physician / Family Doctor",
@@ -56,13 +56,32 @@ export default function AddEmployee() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setShowConfirm(true); // show confirmation modal
+    setShowConfirm(true);
+
+  };
+
+  const saveEmployee = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/employees/add", {
+        first_name: employeeData.firstName,
+        middle_name: employeeData.middleName,
+        last_name: employeeData.lastName,
+        email: employeeData.email,
+        phone: employeeData.phone,
+        address: employeeData.address,
+        sex: employeeData.sex,
+        position: employeeData.position,
+      });
+      console.log(response.data.message);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <>
       {/* ============= Main Registration Modal ============= */}
-      <div className="w-[900px] h-[85vh] bg-white rounded-2xl shadow-lg relative flex flex-col">
+      <div className="w-[1100px] h-[85vh] bg-white rounded-2xl shadow-lg relative flex flex-col">
         {/* Close Button */}
         <button
           className="absolute top-4 right-5 text-gray-400 hover:text-gray-600 text-xl"
@@ -112,11 +131,14 @@ export default function AddEmployee() {
             </div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
-            {/* Personal Info */}
-            <div className="space-y-4">
-              <h3 className="text-md font-semibold text-gray-700 mb-2">
+          {/* ============= Form Section ============= */}
+          <form
+            onSubmit={handleSubmit}
+            className="grid grid-cols-3 gap-x-10 gap-y-6 p-2"
+          >
+            {/* Personal Information */}
+            <div className="flex flex-col h-full space-y-4 border-r border-gray-200 pr-6">
+              <h3 className="text-md font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-1">
                 Personal Information
               </h3>
               <Field
@@ -132,7 +154,10 @@ export default function AddEmployee() {
                 placeholder="Enter middle name"
                 value={employeeData.middleName}
                 onChange={(e) =>
-                  setEmployeeData({ ...employeeData, middleName: e.target.value })
+                  setEmployeeData({
+                    ...employeeData,
+                    middleName: e.target.value,
+                  })
                 }
               />
               <Field
@@ -141,15 +166,6 @@ export default function AddEmployee() {
                 value={employeeData.lastName}
                 onChange={(e) =>
                   setEmployeeData({ ...employeeData, lastName: e.target.value })
-                }
-              />
-              <Field
-                label="Email"
-                type="email"
-                placeholder="Enter email address"
-                value={employeeData.email}
-                onChange={(e) =>
-                  setEmployeeData({ ...employeeData, email: e.target.value })
                 }
               />
               <Select
@@ -162,9 +178,41 @@ export default function AddEmployee() {
               />
             </div>
 
-            {/* Employment Info */}
-            <div className="space-y-4">
-              <h3 className="text-md font-semibold text-gray-700 mb-2">
+            {/* Contact Information */}
+            <div className="flex flex-col h-full space-y-4 border-r border-gray-200 pr-6">
+              <h3 className="text-md font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-1">
+                Contact Information
+              </h3>
+              <Field
+                label="Email"
+                type="email"
+                placeholder="Enter email address"
+                value={employeeData.email}
+                onChange={(e) =>
+                  setEmployeeData({ ...employeeData, email: e.target.value })
+                }
+              />
+              <Field
+                label="Phone"
+                placeholder="Enter phone number"
+                value={employeeData.phone}
+                onChange={(e) =>
+                  setEmployeeData({ ...employeeData, phone: e.target.value })
+                }
+              />
+              <Field
+                label="Address"
+                placeholder="Enter home address"
+                value={employeeData.address}
+                onChange={(e) =>
+                  setEmployeeData({ ...employeeData, address: e.target.value })
+                }
+              />
+            </div>
+
+            {/* Employment Details */}
+            <div className="flex flex-col h-full space-y-4">
+              <h3 className="text-md font-semibold text-gray-700 mb-2 border-b border-gray-200 pb-1">
                 Employment Details
               </h3>
               <Select
@@ -208,11 +256,10 @@ export default function AddEmployee() {
         </div>
       </div>
 
-      {/* ============= Confirmation Modal ============= */}
+      {/* Confirmation Modal */}
       {showConfirm && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/30 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/58 backdrop-blur-xl z-50">
           <div className="w-[850px] bg-white rounded-2xl shadow-lg p-8 relative">
-            {/* Close */}
             <button
               className="absolute top-4 right-5 text-gray-400 hover:text-gray-600 text-xl"
               onClick={() => setShowConfirm(false)}
@@ -220,12 +267,10 @@ export default function AddEmployee() {
               ✕
             </button>
 
-            {/* Header */}
             <h2 className="text-xl font-semibold text-gray-800 border-b border-gray-300 pb-3 mb-5">
               Confirm Employee Details
             </h2>
 
-            {/* Content */}
             <div className="grid grid-cols-2 gap-6">
               <div className="flex flex-col items-center">
                 <div className="w-32 h-32 rounded-full overflow-hidden border border-gray-300">
@@ -262,31 +307,34 @@ export default function AddEmployee() {
                   {employeeData.email || "—"}
                 </p>
                 <p>
+                  <span className="font-medium">Phone Number:</span>{" "}
+                  {employeeData.phone || "—"}
+                </p>
+                 <p>
+                  <span className="font-medium">Address:</span>{" "}
+                  {employeeData.address || "—"}
+                </p>
+                <p>
                   <span className="font-medium">Sex:</span>{" "}
                   {employeeData.sex || "—"}
                 </p>
                 <p>
                   <span className="font-medium">Department:</span>{" "}
-                  {employeeData.department || "—"}
+                  {employeeData.position || "—"}
                 </p>
               </div>
             </div>
 
-            {/* Footer */}
-            <div className="border-t border-gray-300 mt-6 pt-4 flex justify-end gap-3">
+            <div className="flex justify-end mt-6">
               <button
-                className="px-5 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg"
                 onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 mr-3 rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200"
               >
-                Edit
+                Cancel
               </button>
               <button
-                className="px-5 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg"
-                onClick={() => {
-                  console.log("Final Employee Saved:", employeeData);
-                  setShowConfirm(false);
-                  setModalOpen(false);
-                }}
+                onClick={() => saveEmployee()}
+                className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Confirm & Save
               </button>

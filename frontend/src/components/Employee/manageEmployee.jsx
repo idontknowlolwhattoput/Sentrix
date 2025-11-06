@@ -1,14 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import AddEmployee from "./addEmployee";
 import { ModalContext } from "../../context/ModalProvider";
-
+import axios from "axios";
 export default function ManageEmployee() {
   const [employees, setEmployees] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useContext(ModalContext)
-
+  const [isModalOpen, setIsModalOpen] = useContext(ModalContext);
 
   useEffect(() => {
-    fetch("http://localhost:5000/users/db")
+    fetch("http://localhost:5000/employees/view")
       .then((res) => res.json())
       .then((data) => setEmployees(data))
       .catch((err) => console.error("Error fetching employees:", err));
@@ -18,6 +17,17 @@ export default function ManageEmployee() {
     setIsModalOpen(!isModalOpen);
   };
 
+  const handleDelete = (employee_id) => {
+    axios.post("http://localhost:5000/employees/delete", {
+       employee_id: employee_id
+    })
+     .then(function (response) {
+     console.log(response);
+    })
+     .catch(function (error) {
+     console.log(error);
+    });
+  }
   return (
     <div className="w-full h-full max-w-full p-10 overflow-auto bg-gray-50 relative">
       {/* Header */}
@@ -29,7 +39,7 @@ export default function ManageEmployee() {
             placeholder="Search..."
             className="w-64 border border-gray-300 rounded-full px-4 py-2 text-sm focus:ring-2 focus:ring-gray-700 focus:outline-none"
           />
-          <button 
+          <button
             className="bg-black text-white text-sm px-5 py-2 rounded-md hover:bg-gray-800 transition"
             onClick={handleRegister}
           >
@@ -38,7 +48,7 @@ export default function ManageEmployee() {
         </div>
       </div>
 
-      {/* Employee List */}
+      {/* Employee Table */}
       <div className="w-[95%] mt-6 overflow-x-auto max-h-[65vh]">
         <table className="w-full border-separate border-spacing-y-3">
           <thead>
@@ -51,6 +61,7 @@ export default function ManageEmployee() {
               <th className="px-3 text-center">Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {employees.map((emp) => (
               <tr
@@ -58,11 +69,6 @@ export default function ManageEmployee() {
                 className="bg-white shadow-sm hover:shadow-md transition rounded-xl"
               >
                 <td className="px-3 py-3 flex items-center gap-3">
-                  <img
-                    src={emp.profile_picture || "https://via.placeholder.com/40"}
-                    alt="Profile"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
                   <span className="font-medium text-gray-800">
                     {emp.first_name} {emp.middle_name} {emp.last_name}
                   </span>
@@ -70,15 +76,20 @@ export default function ManageEmployee() {
                 <td className="px-3 text-gray-700">{emp.position}</td>
                 <td className="px-3 text-gray-700">{emp.email}</td>
                 <td className="px-3 text-gray-700">{emp.phone}</td>
-                <td className="px-3 text-gray-700">{emp.employee_code}</td>
+                <td className="px-3 text-gray-700">{emp.employee_id}</td>
                 <td className="px-3 text-center">
                   <button className="text-gray-600 hover:text-gray-900 mr-2">
                     ✏️
                   </button>
-                  <button className="text-red-500 hover:text-red-700">🗑️</button>
+                  <button 
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleDelete(emp.employee_id)}>
+                    🗑️
+                  </button>
                 </td>
               </tr>
             ))}
+
             {employees.length === 0 && (
               <tr>
                 <td colSpan="6" className="text-center text-gray-500 py-10">
@@ -90,10 +101,10 @@ export default function ManageEmployee() {
         </table>
       </div>
 
-      {/* Modal - Contained within parent */}
+      {/* Modal */}
       {isModalOpen && (
-        <div className="absolute inset-0 w-full h-full bg-black/40 bg-opacity-50 flex items-center justify-center p-4">
-          <AddEmployee/>
+        <div className="absolute inset-0 w-full h-full bg-black/40 flex items-center justify-center p-4">
+          <AddEmployee />
         </div>
       )}
     </div>
