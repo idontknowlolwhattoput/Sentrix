@@ -71,7 +71,6 @@ export default function AddEmployee() {
         address: employeeData.address,
         sex: employeeData.sex,
         position: employeeData.position,
-        profile_picture: employeeData.profilePicture
       });
       console.log(response.data.message);
     } catch (error) {

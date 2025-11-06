@@ -39,7 +39,7 @@ export const addEmployeeController = (req, res) => {
     }
 
     // Call stored procedure
-    const query = `CALL RegisterEmployee(?,?,?,?,?,?,?,?,?,?,?)`;
+    const query = `CALL RegisterEmployee(?,?,?,?,?,?,?,?,?,?)`;
 
     connection.query(
       query,
@@ -54,7 +54,6 @@ export const addEmployeeController = (req, res) => {
         username,
         hashedPassword,
         position,
-        imageBuffer, // ✅ send as Buffer (for BLOB column)
       ],
       (err, rows) => {
         if (err) {
@@ -65,12 +64,11 @@ export const addEmployeeController = (req, res) => {
           });
         }
 
-        // Respond success
-        res.status(200).json({
+     
+          res.status(200).json({
           message: "Employee successfully registered",
           username,
-          password, // send plaintext password only once
-          data: rows,
+          password, 
         });
       }
     );
