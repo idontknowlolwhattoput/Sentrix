@@ -44,11 +44,10 @@ export default function ManageEmployee() {
   const loading = () => {
     setLoading(true);
     setDeleteSuccess(false); // hide success if visible
-
     setTimeout(() => {
       setLoading(false);
       setDeleteSuccess(true); // show success after loading finishes
-    }, 1000);
+    }, 400);
   };
 
   const handleRegister = () => {

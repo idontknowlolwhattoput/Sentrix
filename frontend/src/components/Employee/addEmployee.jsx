@@ -1,10 +1,16 @@
-import React, { useContext, useState } from "react";
-import { ModalContext } from "../../context/ModalProvider";
+import { useContext, useState } from "react";
 import axios from "axios";
+
+import { ModalContext } from "../../context/ModalProvider";
+
+import ErrorModal from "../modals/errorModal";
+import SuccessModal from "../modals/successModal";
 
 export default function AddEmployee() {
   const [isModalOpen, setModalOpen] = useContext(ModalContext);
-
+  const [isloading, setLoading] = useState(false)
+  const [isSuccess, setSuccess] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false);
   const [employeeData, setEmployeeData] = useState({
     firstName: "",
     middleName: "",
@@ -17,8 +23,6 @@ export default function AddEmployee() {
     position: "",
     profilePicture: null,
   });
-
-  const [showConfirm, setShowConfirm] = useState(false);
 
   const departmentPositions = {
     "General Medicine": [
@@ -73,10 +77,21 @@ export default function AddEmployee() {
         position: employeeData.position,
       });
       console.log(response.data.message);
+      loading()
     } catch (error) {
       console.error(error);
     }
   };
+
+  const loading = () => {
+     setLoading(true);
+     setSuccess(false); // hide success if visible
+     setShowConfirm(false)
+    setTimeout(() => {
+      setLoading(false);
+      setSuccess(true); // show success after loading finishes
+    }, 750);
+  }
 
   return (
     <>
@@ -340,6 +355,22 @@ export default function AddEmployee() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {isloading && (
+        <div className="inset-0 fixed w-full h-full bg-gray-50 flex items-center justify-center">
+          <span className="loading loading-ring loading-xl"></span>
+        </div>
+      )}
+
+      {isSuccess && (
+        <div className="inset-0 fixed w-full h-full bg-gray-50 flex items-center justify-center">
+            <SuccessModal
+              title="Added Successfully"
+              message="The employee record has been added."
+              onClose={() => setModalOpen(false)}
+            />
         </div>
       )}
     </>

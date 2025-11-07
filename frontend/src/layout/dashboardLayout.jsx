@@ -14,6 +14,7 @@ import Signin from "../pages/signin"
 import DashboardHome from "../components/Dashboard/dashboard"
 import PatientRegistration from "../components/Patient/patientRegistration"
 import ManageEmployee from "../components/Employee/manageEmployee"
+import PatientList from "../components/Patient/patientList"
 
 export default function DashboardLayout() {
 
@@ -34,6 +35,9 @@ export default function DashboardLayout() {
         
         case "Register Patient":
           return <PatientRegistration />
+
+        case "Patient List":
+          return <PatientList />
        }
     }
     return (

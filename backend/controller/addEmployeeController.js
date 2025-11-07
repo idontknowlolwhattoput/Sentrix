@@ -1,5 +1,6 @@
 import { connection } from "../config/db.js";
 import bcrypt from "bcrypt";
+import { EmailTransporter } from "../config/emailTransporter.js";
 
 export const addEmployeeController = (req, res) => {
   const {
@@ -11,15 +12,13 @@ export const addEmployeeController = (req, res) => {
     address,
     sex,
     position,
-    profile_picture
+    profile_picture,
   } = req.body;
 
-  // Auto-generate username and password
   const username = `${last_name}-${first_name}-${middle_name}`.toLowerCase();
   const password = Math.floor(Math.random() * 10000000).toString();
   const saltRounds = 10;
 
-  // Convert Base64 image to Buffer (handle null or missing image)
   let imageBuffer = null;
   if (profile_picture) {
     try {
@@ -31,14 +30,12 @@ export const addEmployeeController = (req, res) => {
     }
   }
 
-  // Hash password
   bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
       console.error("Hashing error:", err);
       return res.status(500).send("Error hashing password");
     }
 
-    // Call stored procedure
     const query = `CALL RegisterEmployee(?,?,?,?,?,?,?,?,?,?)`;
 
     connection.query(
@@ -55,7 +52,7 @@ export const addEmployeeController = (req, res) => {
         hashedPassword,
         position,
       ],
-      (err, rows) => {
+      async (err, rows) => {
         if (err) {
           console.error("Query error:", err.message);
           return res.status(500).json({
@@ -64,11 +61,28 @@ export const addEmployeeController = (req, res) => {
           });
         }
 
-     
-          res.status(200).json({
+        try {
+          // ✉️ Send email with login details
+          await EmailTransporter(
+            email,
+            "Your Sentrix Account Details",
+            `
+              <p>Hello ${first_name},</p>
+              <p>Your account has been successfully created.</p>
+              <p><strong>Username:</strong> ${username}</p>
+              <p><strong>Password:</strong> ${password}</p>
+              <br/>
+              <p>Welcome to Sentrix - Your Health Service Management Provider!</p>
+            `
+          );
+        } catch (emailErr) {
+          console.error("Email sending failed:", emailErr);
+        }
+
+        res.status(200).json({
           message: "Employee successfully registered",
           username,
-          password, 
+          password,
         });
       }
     );

@@ -8,4 +8,5 @@ const router = Router()
 router.post("/add", addEmployeeController)
 router.get("/view", viewEmployeeController)
 router.post("/delete", deleteEmployeeController)
+
 export default router;
