@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   User, Phone, Mail, MapPin, Calendar, Heart, 
   AlertTriangle, Users, Activity, Edit, FileText,
-  ChevronRight, Star, Stethoscope // Added Stethoscope
+  ChevronRight, Star, Stethoscope, Plus, Clock, UserCheck, CheckCircle, XCircle
 } from 'lucide-react';
 
 export default function PatientDetails({ patientId, onBack }) {
@@ -10,10 +10,13 @@ export default function PatientDetails({ patientId, onBack }) {
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState('personal');
   const [isEditing, setIsEditing] = useState(false);
+  const [showVisitModal, setShowVisitModal] = useState(false);
+  const [visits, setVisits] = useState([]);
 
   useEffect(() => {
     if (patientId) {
       fetchPatientDetails();
+      fetchVisits();
     }
   }, [patientId]);
 
@@ -22,7 +25,7 @@ export default function PatientDetails({ patientId, onBack }) {
     try {
       const response = await fetch(`http://localhost:5000/api/patients/${patientId}`);
       const data = await response.json();
-      console.log('Patient API Response:', data); // Debug log
+      console.log('Patient API Response:', data);
       if (data.success) {
         setPatient(data.patient);
       }
@@ -30,6 +33,38 @@ export default function PatientDetails({ patientId, onBack }) {
       console.error('Error fetching patient details:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchVisits = async () => {
+    try {
+      // Mock data - replace with actual API call
+      const mockVisits = [
+        {
+          id: 1,
+          scheduled_date: '2024-01-15',
+          created_date: '2024-01-10',
+          doctor_name: 'Dr. Smith',
+          status: 'Scheduled'
+        },
+        {
+          id: 2,
+          scheduled_date: '2024-01-20',
+          created_date: '2024-01-12',
+          doctor_name: 'Dr. Johnson',
+          status: 'Completed'
+        },
+        {
+          id: 3,
+          scheduled_date: '2024-01-25',
+          created_date: '2024-01-18',
+          doctor_name: 'Dr. Williams',
+          status: 'Cancelled'
+        }
+      ];
+      setVisits(mockVisits);
+    } catch (error) {
+      console.error('Error fetching visits:', error);
     }
   };
 
@@ -135,7 +170,7 @@ export default function PatientDetails({ patientId, onBack }) {
       case 'allergies':
         return <AllergyDetails patient={patient} getAllergiesData={getAllergiesData} />;
       case 'visits':
-        return <VisitDetails patient={patient} />;
+        return <VisitDetails patient={patient} visits={visits} formatDate={formatDate} onAddVisit={() => setShowVisitModal(true)} />;
       default:
         return <PersonalDetails patient={patient} getPersonalData={getPersonalData} calculateAge={calculateAge} formatDate={formatDate} />;
     }
@@ -222,6 +257,18 @@ export default function PatientDetails({ patientId, onBack }) {
           </div>
         </div>
       </div>
+
+      {/* Add Visit Modal */}
+      {showVisitModal && (
+        <AddVisitModal 
+          onClose={() => setShowVisitModal(false)}
+          onSave={(newVisit) => {
+            setVisits(prev => [...prev, { ...newVisit, id: Date.now() }]);
+            setShowVisitModal(false);
+          }}
+          patientName={getFullName()}
+        />
+      )}
     </div>
   );
 }
@@ -433,15 +480,230 @@ function AllergyDetails({ patient, getAllergiesData }) {
 }
 
 // Visit Details Component
-function VisitDetails({ patient }) {
+function VisitDetails({ patient, visits, formatDate, onAddVisit }) {
+  const getStatusBadge = (status) => {
+    const baseClasses = "px-2 py-1 text-xs rounded-full font-medium";
+    switch (status) {
+      case 'Scheduled':
+        return `${baseClasses} bg-blue-100 text-blue-800`;
+      case 'Completed':
+        return `${baseClasses} bg-green-100 text-green-800`;
+      case 'Cancelled':
+        return `${baseClasses} bg-red-100 text-red-800`;
+      default:
+        return `${baseClasses} bg-gray-100 text-gray-800`;
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'Scheduled':
+        return <Clock className="w-4 h-4" />;
+      case 'Completed':
+        return <CheckCircle className="w-4 h-4" />;
+      case 'Cancelled':
+        return <XCircle className="w-4 h-4" />;
+      default:
+        return <Clock className="w-4 h-4" />;
+    }
+  };
+
   return (
     <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-900">Visit History</h3>
-      
-      <div className="text-center py-8 text-gray-500">
-        <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-        <p>No visit history available for this patient.</p>
-        <p className="text-sm">Visit records will appear here once created.</p>
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-gray-900">Visit History</h3>
+        <button
+          onClick={onAddVisit}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Add Visit</span>
+        </button>
+      </div>
+
+      {visits.length > 0 ? (
+        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Scheduled Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Created Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Doctor
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {visits.map((visit) => (
+                <tr key={visit.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {formatDate(visit.scheduled_date)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {formatDate(visit.created_date)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <div className="flex items-center space-x-2">
+                      <UserCheck className="w-4 h-4 text-gray-400" />
+                      <span>{visit.doctor_name}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center space-x-2">
+                      {getStatusIcon(visit.status)}
+                      <span className={getStatusBadge(visit.status)}>
+                        {visit.status}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-500">
+          <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+          <p>No visit history available for this patient.</p>
+          <p className="text-sm">Click "Add Visit" to create a new visit record.</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Add Visit Modal Component
+function AddVisitModal({ onClose, onSave, patientName }) {
+  const [formData, setFormData] = useState({
+    scheduled_date: '',
+    created_date: new Date().toISOString().split('T')[0],
+    doctor_name: '',
+    status: 'Scheduled'
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSave(formData);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div 
+        className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white">
+              <Plus className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-gray-800">Add New Visit</h2>
+              <p className="text-gray-600 text-sm">Patient: {patientName}</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 text-xl p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Scheduled Date *
+            </label>
+            <input
+              type="date"
+              name="scheduled_date"
+              value={formData.scheduled_date}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Created Date *
+            </label>
+            <input
+              type="date"
+              name="created_date"
+              value={formData.created_date}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Doctor Name *
+            </label>
+            <input
+              type="text"
+              name="doctor_name"
+              value={formData.doctor_name}
+              onChange={handleChange}
+              required
+              placeholder="Enter doctor's name"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Status *
+            </label>
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="Scheduled">Scheduled</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Save Visit
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

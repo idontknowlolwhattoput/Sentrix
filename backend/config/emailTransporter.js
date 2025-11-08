@@ -98,7 +98,7 @@ export const EmailTransporter = async (email, subject, username, password) => {
           </div>
           <div class="footer">
             © 2024 Sentrix. All rights reserved.
-          </div>
+          </div>  
         </div>
       </body>
       </html>
